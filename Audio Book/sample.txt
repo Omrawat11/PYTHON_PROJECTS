@@ -1,1 +1,0 @@
-Welcome to your Audio Book project! Text to speech is working.
