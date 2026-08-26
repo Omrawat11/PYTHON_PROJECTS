@@ -1,5 +1,3 @@
-<div align="center">
-
 # 🐍 PYTHON_PROJECTS
 
 **A growing collection of Python mini-projects — automation, games, and utilities.**
@@ -10,8 +8,6 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-Omrawat11-181717?style=for-the-badge&logo=github)](https://github.com/Omrawat11)
 
-</div>
-
 ---
 
 ## 📖 About
@@ -20,50 +16,14 @@ This repo is where I build and document small, self-contained Python projects wh
 
 ## 📂 Projects
 
-<table>
-<tr>
-<th align="left">Project</th>
-<th align="left">Description</th>
-<th align="left">Tech</th>
-<th align="left">Link</th>
-</tr>
-
-<tr>
-<td>🔋 <b>Battery Notification</b></td>
-<td>Real-time Windows battery monitor with low/critical toast alerts, charging detection, and remaining-time estimates.</td>
-<td><code>psutil</code>, <code>win10toast</code></td>
-<td><a href="./Battery%20Notification">View →</a></td>
-</tr>
-
-<tr>
-<td>🐢 <b>Turtle Racing</b></td>
-<td>A playful turtle-racing game with betting, countdown animation, and replay support, built on Python's <code>turtle</code> module.</td>
-<td><code>turtle</code></td>
-<td><a href="./Turtle_Racing">View →</a></td>
-</tr>
-
-<tr>
-<td>🔳 <b>QR Code Generator</b></td>
-<td>Generates a QR code image pointing to a URL (currently set to a GitHub profile).</td>
-<td><code>qrcode</code></td>
-<td><a href="./QR%20Code">View →</a></td>
-</tr>
-
-<tr>
-<td>🔊 <b>Text to Speech</b></td>
-<td>Converts a text string into a spoken MP3 file using Google's TTS engine.</td>
-<td><code>gTTS</code></td>
-<td><a href="./Text%20to%20speech">View →</a></td>
-</tr>
-
-<tr>
-<td>✊📄✂️ <b>Rock Paper Scissors</b></td>
-<td>Command-line Rock–Paper–Scissors game, first to 5 points wins.</td>
-<td>Standard library</td>
-<td><a href="./PROJ_1.py">View →</a></td>
-</tr>
-
-</table>
+| Project                      | Description                                                                                                            | Tech                    | Link                                                                                      |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------ | ------------------------------------------------------------------------------------------ |
+| 📚 **Audio Book (PDF → Speech)** | Extracts text from a PDF and converts it into a spoken MP3 "audiobook," with chunking for long documents and CLI options. | `pypdf`, `gTTS`          | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/Audio%20Book)              |
+| 🔋 **Battery Notification**   | Real-time Windows battery monitor with low/critical toast alerts, charging detection, and remaining-time estimates.    | `psutil`, `win10toast`   | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/Battery%20Notification)    |
+| 🐢 **Turtle Racing**          | A playful turtle-racing game with betting, countdown animation, and replay support, built on Python's `turtle` module. | `turtle`                 | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/Turtle_Racing)             |
+| 🔳 **QR Code Generator**      | Generates a QR code image pointing to a URL (currently set to a GitHub profile).                                       | `qrcode`                 | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/QR%20Code)                 |
+| 🔊 **Text to Speech**         | Converts a text string into a spoken MP3 file using Google's TTS engine.                                               | `gTTS`                   | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/Text%20to%20speech)        |
+| ✊📄✂️ **Rock Paper Scissors** | Command-line Rock–Paper–Scissors game, first to 5 points wins.                                                         | Standard library         | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/blob/main/Rock_Paper_Scissors.py)    |
 
 ## 🚀 Quick Start
 
@@ -73,20 +33,20 @@ git clone https://github.com/Omrawat11/PYTHON_PROJECTS.git
 cd PYTHON_PROJECTS
 
 # Enter a project folder and install its dependencies (if it has a requirements.txt)
-cd "Battery Notification"
+cd "Audio Book"
 pip install -r requirements.txt
-python Battery_Notification.py
+python pdf_to_speech.py mybook.pdf
 ```
 
 Projects without a `requirements.txt` list their dependencies at the top of the main script (e.g. `# pip install qrcode`).
 
 ## 🛠️ Tech Stack
 
-| Category | Libraries |
-| :--- | :--- |
-| System / Automation | `psutil`, `win10toast` |
-| Media / Generation | `qrcode`, `gTTS` |
-| Graphics / Games | `turtle` |
+| Category            | Libraries               |
+| -------------------- | ------------------------- |
+| System / Automation  | `psutil`, `win10toast`    |
+| Media / Generation   | `qrcode`, `gTTS`, `pypdf` |
+| Graphics / Games     | `turtle`                  |
 
 ## 🗺️ Roadmap
 
@@ -94,6 +54,8 @@ Projects without a `requirements.txt` list their dependencies at the top of the 
 - [x] Turtle racing game
 - [x] QR code generator
 - [x] Text-to-speech demo
+- [x] PDF-to-audiobook converter
+- [ ] Add OCR fallback for scanned PDFs
 - [ ] Add more automation scripts
 - [ ] Add a requirements.txt per project consistently
 - [ ] Add a shared `utils/` folder for common helpers
@@ -102,6 +64,4 @@ Projects without a `requirements.txt` list their dependencies at the top of the 
 
 Distributed under the **MIT License**. Individual projects may include their own `LICENSE` file.
 
-<div align="center">
-<sub>Made with ❤️ by <a href="https://github.com/Omrawat11">Omrawat11</a></sub>
-</div>
+Made with ❤️ by [Omrawat11](https://github.com/Omrawat11)
