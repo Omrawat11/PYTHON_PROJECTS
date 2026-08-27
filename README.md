@@ -50,6 +50,13 @@ This repo is where I build and document small, self-contained Python projects wh
 </tr>
 
 <tr>
+<td>🛡️ <b>Captcha Generator</b></td>
+<td>Advanced interactive CAPTCHA generator suite with multi-engine rendering (PIL & Captcha library), audio TTS accessibility, multiple challenge modes, and verification analytics.</td>
+<td><code>Pillow</code>, <code>captcha</code>, <code>pywin32</code> / <code>tkinter</code></td>
+<td><a href="./Captcha%20Generator">View →</a></td>
+</tr>
+
+<tr>
 <td>🔊 <b>Text to Speech</b></td>
 <td>Converts a text string into a spoken MP3 file using Google's TTS engine.</td>
 <td><code>gTTS</code></td>
@@ -73,9 +80,9 @@ git clone https://github.com/Omrawat11/PYTHON_PROJECTS.git
 cd PYTHON_PROJECTS
 
 # Enter a project folder and install its dependencies (if it has a requirements.txt)
-cd "Battery Notification"
+cd "Captcha Generator"
 pip install -r requirements.txt
-python Battery_Notification.py
+python captcha.py
 ```
 
 Projects without a `requirements.txt` list their dependencies at the top of the main script (e.g. `# pip install qrcode`).
@@ -84,9 +91,9 @@ Projects without a `requirements.txt` list their dependencies at the top of the 
 
 | Category | Libraries |
 | :--- | :--- |
-| System / Automation | `psutil`, `win10toast` |
-| Media / Generation | `qrcode`, `gTTS` |
-| Graphics / Games | `turtle` |
+| System / Automation | `psutil`, `win10toast`, `pywin32` |
+| Media / Generation | `qrcode`, `gTTS`, `Pillow`, `captcha` |
+| Graphics / Games / GUI | `turtle`, `tkinter` |
 
 ## 🗺️ Roadmap
 
@@ -94,6 +101,7 @@ Projects without a `requirements.txt` list their dependencies at the top of the 
 - [x] Turtle racing game
 - [x] QR code generator
 - [x] Text-to-speech demo
+- [x] Captcha Generator Studio
 - [ ] Add more automation scripts
 - [ ] Add a requirements.txt per project consistently
 - [ ] Add a shared `utils/` folder for common helpers
