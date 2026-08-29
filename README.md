@@ -27,10 +27,13 @@ This repo is where I build and document small, self-contained Python projects wh
 
 | Project | Description | Tech | Link |
 |:---:|:---|:---:|:---:|
+| 🛡️ **Captcha Generator** | Advanced interactive CAPTCHA generator suite with multi-engine rendering (PIL & Captcha library), audio TTS accessibility, multiple challenge modes, and verification analytics. | `Pillow` `captcha` `pywin32` `tkinter` | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/Captcha%20Generator) |
+| 📚 **Audio Book (PDF → Speech)** | Extracts text from a PDF and converts it into a spoken MP3 "audiobook," with chunking for long documents and CLI options. | `pypdf` `gTTS` | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/Audio%20Book) |
 | 🔋 **Battery Notification** | Real-time Windows battery monitor with low/critical toast alerts, charging detection, and remaining-time estimates. | `psutil` `win10toast` | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/Battery%20Notification) |
 | 🐢 **Turtle Racing** | A playful turtle-racing game with betting, countdown animation, and replay support, built on Python's `turtle` module. | `turtle` | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/Turtle_Racing) |
 | 🔳 **QR Code Generator** | Generates a QR code image pointing to a URL. | `qrcode` | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/QR%20Code) |
 | 🔊 **Text to Speech** | Converts a text string into a spoken MP3 file using Google's TTS engine. | `gTTS` | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/Text%20to%20speech) |
+| 📑 **PDF Merge** | Combines and merges multiple PDF files sequentially or by custom page insertion. | `pypdf` `PyPDF2` | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/tree/main/PDF%20Merge) |
 | ✊📄✂️ **Rock Paper Scissors** | Command-line Rock–Paper–Scissors game, first to 5 points wins. | Standard library | [View →](https://github.com/Omrawat11/PYTHON_PROJECTS/blob/main/Rock_Paper_Scissors.py) |
 
 </div>
