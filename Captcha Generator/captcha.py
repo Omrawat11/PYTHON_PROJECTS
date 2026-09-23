@@ -203,7 +203,8 @@ class CaptchaEngine:
             else:
                 angle = random.randint(-8, 8)
 
-            rotated = char_canvas.rotate(angle, expand=1, resample=Image.BICUBIC)
+            resample_mode = getattr(getattr(Image, "Resampling", None), "BICUBIC", getattr(Image, "BICUBIC", 3))
+            rotated = char_canvas.rotate(angle, expand=1, resample=resample_mode)
 
             x_pos = int(20 + i * step + random.randint(-3, 3))
             y_pos = int((self.height - rotated.height) / 2 + random.randint(-4, 4))
@@ -249,7 +250,9 @@ class CaptchaEngine:
             try:
                 gen = ExternalImageCaptcha(width=self.width, height=self.height)
                 data = gen.generate(text)
-                return Image.open(data)
+                img = Image.open(data)
+                img.load()
+                return img.convert("RGB")
             except Exception:
                 pass
         return self.render_pil(text)
@@ -263,13 +266,13 @@ class CaptchaEngine:
         pixels_out = distorted.load()
 
         for x in range(w):
+            offset_y = int(amplitude * math.sin(x * freq + 1.2))
             for y in range(h):
-                offset_y = int(amplitude * math.sin(x * freq + 1.2))
-                new_y = y + offset_y
-                if 0 <= new_y < h:
-                    pixels_out[x, new_y] = pixels_in[x, y]
+                src_y = y - offset_y
+                if 0 <= src_y < h:
+                    pixels_out[x, y] = pixels_in[x, src_y]
                 else:
-                    pixels_out[x, y] = pixels_in[x, y]
+                    pixels_out[x, y] = bg_col
         return distorted
 
 
@@ -278,31 +281,65 @@ class CaptchaEngine:
 # =============================================================================
 class CaptchaVoice:
     """Speaks CAPTCHA characters cleanly in background threads for accessibility."""
-    @staticmethod
-    def speak(text):
+    _lock = threading.Lock()
+
+    @classmethod
+    def speak(cls, text):
         def _runner():
-            # Try Windows SAPI native dispatch
-            try:
-                import win32com.client
-                import pythoncom
-                pythoncom.CoInitialize()
-                speaker = win32com.client.Dispatch("SAPI.SpVoice")
-                speaker.Rate = -1  # Slightly slower for clear dictation
-                speaker.Speak(text)
-                pythoncom.CoUninitialize()
+            # Prevent overlapping speech if user rapidly clicks the audio button
+            if not cls._lock.acquire(blocking=False):
                 return
-            except Exception:
-                pass
-            
-            # Fallback to pyttsx3 if installed
             try:
-                import pyttsx3
-                engine = pyttsx3.init()
-                engine.setProperty("rate", 140)
-                engine.say(text)
-                engine.runAndWait()
-            except Exception:
-                pass
+                # 1. Try Windows SAPI native dispatch (via win32com)
+                try:
+                    import pythoncom
+                    import win32com.client
+                    pythoncom.CoInitialize()
+                    try:
+                        speaker = win32com.client.Dispatch("SAPI.SpVoice")
+                        speaker.Rate = -1  # Slightly slower for clear dictation
+                        speaker.Speak(text)
+                        return
+                    finally:
+                        pythoncom.CoUninitialize()
+                except Exception:
+                    pass
+                
+                # 2. Fallback to pyttsx3 if installed
+                try:
+                    try:
+                        import pythoncom
+                        pythoncom.CoInitialize()
+                    except Exception:
+                        pass
+                    import pyttsx3
+                    engine = pyttsx3.init()
+                    engine.setProperty("rate", 140)
+                    engine.say(text)
+                    engine.runAndWait()
+                    try:
+                        engine.stop()
+                    except Exception:
+                        pass
+                    return
+                except Exception:
+                    pass
+
+                # 3. Built-in Windows PowerShell speech fallback (works on any Windows PC without pip install)
+                if sys.platform == "win32":
+                    try:
+                        import subprocess
+                        escaped = text.replace('"', '`"').replace("'", "''")
+                        cmd = f'Add-Type -AssemblyName System.Speech; (New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak("{escaped}")'
+                        subprocess.run(
+                            ["powershell", "-NoProfile", "-NonInteractive", "-Command", cmd],
+                            creationflags=0x08000000,
+                            timeout=10
+                        )
+                    except Exception:
+                        pass
+            finally:
+                cls._lock.release()
 
         threading.Thread(target=_runner, daemon=True).start()
 
@@ -432,7 +469,7 @@ class CaptchaApp:
         img_border = tk.Frame(img_container, bg=self.c_card_border, padx=3, pady=3)
         img_border.pack(side=tk.LEFT)
 
-        self.lbl_captcha = tk.Label(img_border, bg="#f6f8fc", width=340, height=115)
+        self.lbl_captcha = tk.Label(img_border, bg="#f6f8fc")
         self.lbl_captcha.pack()
 
         # Side Action buttons for Captcha (Reload & Audio)
@@ -687,7 +724,7 @@ class CaptchaApp:
     def _clear_input(self):
         self.entry_input.delete(0, tk.END)
 
-    def refresh_captcha(self):
+    def refresh_captcha(self, keep_status=False):
         """Generates a new CAPTCHA and renders it."""
         mode = self.var_mode.get()
         length = self.var_length.get()
@@ -719,15 +756,19 @@ class CaptchaApp:
         self.lbl_captcha.image = self.current_photo  # Prevent GC
 
         # Reset Status & focus input
-        self.lbl_status.config(
-            text="Type the characters above and press Enter",
-            fg=self.c_text_muted
-        )
+        if not keep_status:
+            self.lbl_status.config(
+                text="Type the characters above and press Enter",
+                fg=self.c_text_muted
+            )
         self._clear_input()
         self.entry_input.focus_set()
 
     def verify_captcha(self):
         """Validates the user input against the current solution."""
+        if getattr(self, "_is_verifying", False):
+            return
+
         user_input = self.entry_input.get().strip()
 
         if not user_input:
@@ -746,6 +787,7 @@ class CaptchaApp:
             is_correct = (user_input.lower() == self.current_solution.lower())
 
         if is_correct:
+            self._is_verifying = True
             self.stat_verified += 1
             self.stat_streak += 1
             if self.stat_streak > self.stat_best_streak:
@@ -756,8 +798,14 @@ class CaptchaApp:
                 fg=self.c_success
             )
             self._update_stats()
+            self._clear_input()
+
+            def _next_after_delay():
+                self._is_verifying = False
+                self.refresh_captcha()
+
             # Brief delay before generating next challenge for smooth experience
-            self.root.after(700, self.refresh_captcha)
+            self.root.after(700, _next_after_delay)
         else:
             self.stat_streak = 0
             self.lbl_status.config(
@@ -766,7 +814,7 @@ class CaptchaApp:
             )
             self._update_stats()
             self._clear_input()
-            self.refresh_captcha()
+            self.refresh_captcha(keep_status=True)
 
     def _update_stats(self):
         """Updates the statistics labels."""
@@ -790,7 +838,8 @@ class CaptchaApp:
         """Exports the generated CAPTCHA to a PNG file."""
         if not self.current_image:
             return
-        default_name = f"captcha_{self.current_solution}_{int(time.time())}.png"
+        clean_sol = "".join(c for c in self.current_solution if c.isalnum() or c in ("-", "_")) or "challenge"
+        default_name = f"captcha_{clean_sol}_{int(time.time())}.png"
         filepath = filedialog.asksaveasfilename(
             defaultextension=".png",
             filetypes=[("PNG Image", "*.png"), ("All Files", "*.*")],
