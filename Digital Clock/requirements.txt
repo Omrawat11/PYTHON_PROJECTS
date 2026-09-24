@@ -1,0 +1,5 @@
+# Digital Clock relies solely on Python's Standard Library:
+# - tkinter (GUI framework bundled with Python on Windows/macOS)
+# - datetime (built-in date and time management)
+#
+# No external pip packages required.
