@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ultra-modern, real-time global currency converter with interactive charts, historical trends, live rates, and 165+ world currencies.">
+  <title>FluxConvert — Modern Global Currency Converter & Trends</title>
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js for Historical Trends -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow effects -->
+  <div class="ambient-glow glow-1" aria-hidden="true"></div>
+  <div class="ambient-glow glow-2" aria-hidden="true"></div>
+  <div class="ambient-glow glow-3" aria-hidden="true"></div>
+
+  <!-- Main Container -->
+  <div class="app-layout">
+    
+    <!-- Top Navigation Bar -->
+    <header class="navbar" role="banner">
+      <div class="nav-brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">FluxConvert</span>
+          <span class="brand-badge">PRO</span>
+        </div>
+      </div>
+
+      <!-- Live Market Rates Ticker Ribbon -->
+      <div class="ticker-wrapper" id="tickerWrapper" aria-label="Live Market Rates Ticker">
+        <div class="ticker-track" id="tickerTrack">
+          <!-- Dynamically populated ticker items -->
+          <div class="ticker-item"><span class="ticker-pair">USD/EUR</span> <span class="ticker-val">0.8787</span> <span class="ticker-up">▲ 0.12%</span></div>
+          <div class="ticker-item"><span class="ticker-pair">USD/GBP</span> <span class="ticker-val">0.7564</span> <span class="ticker-up">▲ 0.08%</span></div>
+          <div class="ticker-item"><span class="ticker-pair">USD/INR</span> <span class="ticker-val">96.02</span> <span class="ticker-down">▼ 0.15%</span></div>
+          <div class="ticker-item"><span class="ticker-pair">USD/JPY</span> <span class="ticker-val">158.69</span> <span class="ticker-up">▲ 0.34%</span></div>
+        </div>
+      </div>
+
+      <!-- Header Action Controls -->
+      <div class="nav-actions">
+        <div class="status-indicator" id="statusBadge" title="Live exchange rate connection">
+          <span class="status-dot"></span>
+          <span class="status-text" id="statusText">Live Rates</span>
+        </div>
+
+        <button class="icon-btn" id="btnRefresh" title="Refresh live rates" aria-label="Refresh live rates">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="refreshIcon">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn" id="btnThemeToggle" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
+          <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="main-content" role="main">
+      
+      <!-- Left Column: Converter Core Card -->
+      <section class="converter-section">
+        <div class="glass-card converter-card">
+          <div class="card-header">
+            <div>
+              <h1 class="card-title">Exchange Currency</h1>
+              <p class="card-subtitle">Real-time mid-market rate with 0% hidden margins</p>
+            </div>
+            <div class="last-sync" id="lastSyncInfo" title="Rate timestamp">
+              Updated: <span id="syncTime">Today</span>
+            </div>
+          </div>
+
+          <!-- Converter Form -->
+          <form class="converter-form" id="converterForm" onsubmit="event.preventDefault();">
+            
+            <!-- Amount Input Field with Quick Increments -->
+            <div class="input-block">
+              <div class="input-header">
+                <label for="amountInput" class="input-label">Amount</label>
+                <div class="quick-amounts" aria-label="Quick amount increments">
+                  <button type="button" class="chip-btn" data-inc="10">+10</button>
+                  <button type="button" class="chip-btn" data-inc="100">+100</button>
+                  <button type="button" class="chip-btn" data-inc="1000">+1K</button>
+                  <button type="button" class="chip-btn reset-btn" id="btnResetAmount">Reset</button>
+                </div>
+              </div>
+
+              <div class="amount-input-wrapper">
+                <span class="currency-symbol-tag" id="sourceSymbolTag">$</span>
+                <input 
+                  type="text" 
+                  id="amountInput" 
+                  class="amount-field" 
+                  value="1,000.00" 
+                  inputmode="decimal" 
+                  autocomplete="off"
+                  placeholder="0.00"
+                  aria-label="Amount to convert"
+                >
+              </div>
+            </div>
+
+            <!-- Currency Selection Grid with Swap Button -->
+            <div class="currency-pair-grid">
+              
+              <!-- Source Currency Selector -->
+              <div class="currency-picker-container">
+                <span class="picker-label">From</span>
+                <button type="button" class="currency-select-trigger" id="fromCurrencyBtn" aria-haspopup="dialog" aria-expanded="false">
+                  <div class="currency-pill">
+                    <span class="flag-icon" id="fromFlag">🇺🇸</span>
+                    <div class="currency-info">
+                      <span class="currency-code" id="fromCode">USD</span>
+                      <span class="currency-name" id="fromName">US Dollar</span>
+                    </div>
+                  </div>
+                  <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Interactive Animated Swap Button -->
+              <div class="swap-action-wrapper">
+                <button type="button" class="swap-btn" id="btnSwap" title="Swap currencies (Press S or click)" aria-label="Swap source and target currencies">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Target Currency Selector -->
+              <div class="currency-picker-container">
+                <span class="picker-label">To</span>
+                <button type="button" class="currency-select-trigger" id="toCurrencyBtn" aria-haspopup="dialog" aria-expanded="false">
+                  <div class="currency-pill">
+                    <span class="flag-icon" id="toFlag">🇮🇳</span>
+                    <div class="currency-info">
+                      <span class="currency-code" id="toCode">INR</span>
+                      <span class="currency-name" id="toName">Indian Rupee</span>
+                    </div>
+                  </div>
+                  <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Conversion Result Billboard -->
+            <div class="result-billboard" id="resultBillboard" aria-live="polite">
+              <div class="conversion-summary">
+                <span class="conversion-from" id="summaryFrom">1,000.00 USD =</span>
+                <div class="conversion-to-group">
+                  <span class="conversion-target-val" id="summaryTargetVal">96,015.08</span>
+                  <span class="conversion-target-code" id="summaryTargetCode">INR</span>
+                </div>
+              </div>
+
+              <div class="exchange-rate-tags">
+                <div class="rate-pill">
+                  <span class="rate-label">Rate</span>
+                  <span class="rate-value" id="directRateText">1 USD = 96.0151 INR</span>
+                </div>
+                <div class="rate-pill">
+                  <span class="rate-label">Inverse</span>
+                  <span class="rate-value" id="inverseRateText">1 INR = 0.0104 USD</span>
+                </div>
+              </div>
+
+              <div class="billboard-actions">
+                <button type="button" class="action-btn" id="btnCopyResult" title="Copy converted amount to clipboard">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span id="copyBtnText">Copy Result</span>
+                </button>
+                
+                <button type="button" class="action-btn" id="btnPinPair" title="Save this pair to favorites">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  </svg>
+                  <span>Favorite</span>
+                </button>
+              </div>
+            </div>
+
+          </form>
+
+          <!-- Pinned Favorites Quick Bar -->
+          <div class="favorites-bar">
+            <span class="favorites-title">Pinned Pairs:</span>
+            <div class="favorites-chips" id="favoritesChips">
+              <!-- Dynamically populated -->
+              <button type="button" class="fav-chip" data-from="USD" data-to="EUR">USD → EUR</button>
+              <button type="button" class="fav-chip" data-from="USD" data-to="INR">USD → INR</button>
+              <button type="button" class="fav-chip" data-from="EUR" data-to="GBP">EUR → GBP</button>
+              <button type="button" class="fav-chip" data-from="USD" data-to="JPY">USD → JPY</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Right Column: Interactive Trends & Analytics -->
+      <section class="analytics-section">
+        
+        <!-- Historical Chart Card -->
+        <div class="glass-card chart-card">
+          <div class="chart-header">
+            <div>
+              <h2 class="section-title" id="chartHeading">USD to INR Trend</h2>
+              <p class="section-subtitle">Historical mid-market exchange rate trajectory</p>
+            </div>
+
+            <!-- Timeframe Range Switcher -->
+            <div class="timeframe-selector" role="radiogroup" aria-label="Historical Timeframe">
+              <button type="button" class="tf-btn" data-days="7">7D</button>
+              <button type="button" class="tf-btn active" data-days="30">1M</button>
+              <button type="button" class="tf-btn" data-days="90">3M</button>
+              <button type="button" class="tf-btn" data-days="365">1Y</button>
+            </div>
+          </div>
+
+          <!-- Trend Metrics Strip -->
+          <div class="metrics-grid">
+            <div class="metric-box">
+              <span class="metric-title">Period High</span>
+              <span class="metric-value" id="metricHigh">96.85</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-title">Period Low</span>
+              <span class="metric-value" id="metricLow">94.30</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-title">Period Avg</span>
+              <span class="metric-value" id="metricAvg">95.62</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-title">Net Change</span>
+              <span class="metric-value positive" id="metricChange">+1.24%</span>
+            </div>
+          </div>
+
+          <!-- Chart Canvas Container -->
+          <div class="chart-canvas-container">
+            <canvas id="trendChart" aria-label="Interactive currency trend chart"></canvas>
+          </div>
+        </div>
+
+        <!-- Global Multi-Currency Rates Matrix -->
+        <div class="glass-card matrix-card">
+          <div class="matrix-header">
+            <h2 class="section-title">Global Comparison Matrix</h2>
+            <span class="matrix-badge">1 <span id="matrixBaseCode">USD</span> equals:</span>
+          </div>
+
+          <div class="matrix-grid" id="matrixGrid">
+            <!-- Dynamically populated 12 major currency cards -->
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Bottom Section: Conversion History -->
+    <footer class="history-section" role="contentinfo">
+      <div class="glass-card history-card">
+        <div class="history-header">
+          <div class="history-title-group">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <h3 class="history-title">Recent Conversions</h3>
+          </div>
+          <button type="button" class="text-link-btn" id="btnClearHistory">Clear All</button>
+        </div>
+
+        <div class="history-list" id="historyList">
+          <div class="empty-history">No recent conversions yet. Perform an exchange to track your activity.</div>
+        </div>
+      </div>
+
+      <div class="footer-meta">
+        <p>FluxConvert • Designed with precision • Live market rates powered by Open Exchange Rates API</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Searchable Currency Selection Modal / Popover -->
+  <div class="modal-backdrop" id="currencyModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Select Currency</h3>
+        <button type="button" class="modal-close-btn" id="btnModalClose" aria-label="Close dialog">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Currency Search Bar -->
+      <div class="modal-search-wrapper">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="search" 
+          id="currencySearchInput" 
+          class="modal-search-input" 
+          placeholder="Search by code, country, or currency name..." 
+          autocomplete="off"
+        >
+      </div>
+
+      <!-- Category Filter Tabs -->
+      <div class="category-tabs" role="tablist">
+        <button type="button" class="cat-tab active" data-filter="all">All</button>
+        <button type="button" class="cat-tab" data-filter="popular">Popular</button>
+        <button type="button" class="cat-tab" data-filter="americas">Americas</button>
+        <button type="button" class="cat-tab" data-filter="europe">Europe</button>
+        <button type="button" class="cat-tab" data-filter="asia">Asia-Pacific</button>
+        <button type="button" class="cat-tab" data-filter="africa">Africa</button>
+      </div>
+
+      <!-- Currencies List -->
+      <div class="currency-scroll-list" id="currencyListContainer" role="listbox">
+        <!-- Dynamically injected items -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Notification Hub -->
+  <div class="toast-container" id="toastContainer" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
