@@ -1,84 +1,89 @@
-# 💱 Global Currency Converter
+# 💱 FluxConvert — Modern Global Currency Converter & Web UI
 
-A feature-rich, robust Python currency converter CLI that converts amounts between 165+ global currencies using live exchange rates, intelligent fallbacks, local caching, and an interactive shell.
+A feature-rich, high-performance currency conversion suite featuring:
+1. **Interactive Modern Web Application (`UIcurr.py`)**: Glassmorphism Neo-Fintech UI with interactive Chart.js historical charts, live market ticker, searchable currency modals with flags, dark/light mode, and offline resilience.
+2. **Terminal CLI & REPL Tool (`curr.py`)**: Fast CLI utility with live multi-tier API fallbacks, caching, decimal conversions, and typo suggestions.
 
 ---
 
 ## ✨ Features
 
-- **Live Exchange Rates**: Fetches live rates without requiring any mandatory API key (powered by Open Exchange Rate API).
-- **Multi-Tier Fallbacks**:
-  1. High-speed local cache (12-hour validity)
-  2. Primary live API (`open.er-api.com`)
-  3. Secondary backup API (`api.exchangerate-api.com`)
-  4. Optional Fixer.io support (via `FIXER_API_KEY` or `--fixer-key`)
-  5. Built-in offline baseline rates (never crashes even if completely disconnected)
-- **Flexible Modes**:
-  - **Direct CLI Conversion**: e.g., `python curr.py 100 USD EUR`
-  - **Interactive REPL Loop**: User-friendly shell with live commands.
-- **Smart Currency Search**: Search by currency name, ISO code, or country (e.g. `search rupee`, `search japan`, `search euro`).
-- **Typo Suggestions**: Automatically suggests correct currency codes if a typo is made (e.g., `USDD` -> `USD`).
-- **Comprehensive Metadata**: Displays currency symbols (`$`, `€`, `£`, `₹`, `¥`), exchange rates, inverse rates, and last update timestamps.
-- **Decimal & Comma Support**: Accepts formatted numbers like `1,250.50` or standard floats `99.95`.
-- **Zero-Crash Design**: Full error handling for network timeouts, invalid inputs, and legacy Windows console encodings.
+- **🎨 Modern Web UI**:
+  - **Glassmorphic Neo-Fintech Theme**: Frosted glass cards, ambient gradient glows, and refined borders.
+  - **Interactive Historical Chart**: Powered by Chart.js with timeframe switches (`7D`, `1M`, `3M`, `1Y`), period high/low/average stats, and gradient fills.
+  - **Live Market Ticker**: Real-time ribbon with popular world currencies and change percentages.
+  - **Global Comparison Matrix**: Live multi-currency conversion table across 12 major global currencies.
+  - **Animated Quick Actions**: Interactive 360° swap button (`⇄`), quick increment chips (`+10`, `+100`, `+1K`), and clipboard copy.
+  - **Searchable Currency Dialog**: Fast search across 165+ currencies with country flag emojis, ISO codes, and region filter tabs (Americas, Europe, Asia, Africa).
+  - **Theme Switcher**: Smooth toggle between Dark Mode and Light Mode with persistent state.
+  - **Favorites & History**: Pin preferred pairs and review conversion logs.
+
+- **⚡ Robust Backend & Rate Engine**:
+  - **Zero-Key Live Rates**: Fetches live rates directly from Open Exchange Rates API.
+  - **Multi-Tier Fallbacks**:
+    1. Local cache (12-hour validity window)
+    2. Primary live API (`open.er-api.com`)
+    3. Secondary live API (`api.exchangerate-api.com`)
+    4. Optional Fixer.io support (`--fixer-key` or `FIXER_API_KEY`)
+    5. Built-in offline baseline rates (guaranteed zero crashes)
+  - **Universal Compatibility**: Uses Python standard library (`http.server`, `urllib`, `webbrowser`) so the Web UI launches with **zero external heavy server frameworks required**.
 
 ---
 
-## 🚀 Quick Start
+## 🚀 How to Run
 
-### 1. Install Dependencies
+### Option A: Launch Interactive Web Application (Recommended)
+
+From the project root or inside `Currency_Convertor`:
+
 ```bash
-pip install -r requirements.txt
+# From workspace root:
+python Currency_Convertor/UIcurr.py
+
+# Or from inside Currency_Convertor directory:
+cd Currency_Convertor
+python UIcurr.py
 ```
 
-### 2. Direct CLI Conversion
+*The application starts a local server and automatically opens `http://127.0.0.1:5000/` in your default web browser.*
+
+---
+
+### Option B: Terminal CLI & REPL Mode
+
 ```bash
-# Convert 100 USD to INR
-python curr.py 100 USD INR
+# Interactive terminal shell
+python Currency_Convertor/curr.py
 
-# Convert 50 EUR to USD
-python curr.py 50 EUR USD
+# Instant single-line conversion
+python Currency_Convertor/curr.py 100 USD EUR
+python Currency_Convertor/curr.py 5000 INR USD
 
-# Search for a currency
-python curr.py --search rupee
+# Search currencies by name or country
+python Currency_Convertor/curr.py --search rupee
 
-# View popular currencies snapshot
-python curr.py --popular
+# Overview of popular currencies
+python Currency_Convertor/curr.py --popular
 
 # List all available currencies
-python curr.py --list
-```
-
-### 3. Interactive Mode
-Run without arguments to start the interactive shell:
-```bash
-python curr.py
-```
-
-Inside the interactive shell:
-```text
-Convert > 100 USD EUR
-Convert > 5000 INR USD
-Convert > search dollar
-Convert > popular
-Convert > list
-Convert > refresh
-Convert > help
-Convert > q
+python Currency_Convertor/curr.py --list
 ```
 
 ---
 
-## 🛠️ Command-Line Options
+## 📁 Project Structure
 
-| Option | Shorthand | Description |
-|---|---|---|
-| `amount from to` | - | Perform immediate currency conversion |
-| `--search <query>` | `-s` | Search currencies by keyword, name, or country |
-| `--popular` | `-p` | Display exchange rate overview for major world currencies |
-| `--list` | `-l` | List all 165+ supported currency codes |
-| `--refresh` | `-r` | Force refresh rates from API and bypass local cache |
-| `--fixer-key <key>` | - | Provide an optional Fixer.io API key |
+```text
+Currency_Convertor/
+├── UIcurr.py           # Web UI server launcher & REST API endpoints
+├── curr.py             # Advanced CLI converter & rate engine
+├── requirements.txt    # Python dependencies (requests)
+├── README.md           # Documentation & usage guide
+└── web/
+    ├── index.html      # Responsive HTML5 SPA layout
+    ├── style.css       # Vanilla CSS glassmorphism & neo-fintech styles
+    └── app.js          # Reactive frontend client & Chart.js logic
+```
 
 ---
 

@@ -22,3 +22,7 @@ __pycache__/
 Thumbs.db
 desktop.ini
 *.ini
+
+# Junction / aliases
+Currency Convertor/
+rates_cache.json
