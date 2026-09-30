@@ -18,6 +18,17 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
+# Attempt to include base Anaconda site-packages if running inside a workspace environment
+candidate_paths = [
+    os.path.join(os.path.expanduser("~"), "anaconda3", "Lib", "site-packages"),
+    os.path.join(os.path.expanduser("~"), "miniconda3", "Lib", "site-packages"),
+    r"C:\Users\TUF\anaconda3\Lib\site-packages",
+    r"C:\ProgramData\anaconda3\Lib\site-packages",
+]
+for p in candidate_paths:
+    if os.path.isdir(p) and p not in sys.path:
+        sys.path.append(p)
+
 # Safe dependency imports with clear user-facing feedback
 missing_deps = []
 
@@ -49,13 +60,20 @@ except ImportError:
 def check_dependencies() -> bool:
     """Check if all required third-party libraries are installed."""
     if missing_deps:
-        print("\n" + "=" * 60)
-        print("❌ Missing required dependencies:")
+        print("\n" + "=" * 65)
+        print("❌ Missing required dependencies in the active Python environment:")
         for dep in missing_deps:
             print(f"   • {dep}")
-        print("\nPlease install them by running:")
-        print(f"   pip install {' '.join(missing_deps)}")
-        print("=" * 60 + "\n")
+        print("\nℹ️  Environment Details:")
+        print(f"   Active Python: {sys.executable}")
+        print("\n💡 Why this happens:")
+        print("   Running 'pip install' installed packages into your base Anaconda environment,")
+        print("   while this terminal is executing the local workspace environment (.conda).")
+        print("\n👉 Option 1: Install into the current active environment:")
+        print(f"   python -m pip install {' '.join(missing_deps)}")
+        print("\n👉 Option 2: Run with your base Anaconda Python (where packages exist):")
+        print(r"   C:\Users\TUF\anaconda3\python.exe Instagram_analyst.py")
+        print("=" * 65 + "\n")
         return False
     return True
 
