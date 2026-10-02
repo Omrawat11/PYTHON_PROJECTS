@@ -26,3 +26,7 @@ desktop.ini
 # Junction / aliases
 Currency Convertor/
 rates_cache.json
+
+# Local environment setup scripts
+setup_env.bat
+setup_env.ps1
